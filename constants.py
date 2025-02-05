@@ -1,0 +1,35 @@
+ANNOUNCEMENTS_HEADERS = [
+    "NEWSID",
+    "SCRIP_CD",
+    "STOCK_SYMBOL",
+    "XML_NAME",
+    "NEWSSUB",
+    "DT_TM",
+    "NEWS_DT",
+    "CRITICALNEWS",
+    "ANNOUNCEMENT_TYPE",
+    "QUARTER_ID",
+    "FILESTATUS",
+    "ATTACHMENTNAME",
+    "MORE",
+    "HEADLINE",
+    "CATEGORYNAME",
+    "OLD",
+    "RN",
+    "PDFFLAG",
+    "NSURL",
+    "SLONGNAME",
+    "AGENDA_ID",
+    "TotalPageCnt",
+    "News_submission_dt",
+    "DissemDT",
+    "TimeDiff",
+    "Fld_Attachsize",
+    "SUBCATNAME",
+    "AUDIO_VIDEO_FILE"
+]
+
+ALL_ANNOUNCEMENTS = 'ALL_ANNOUNCEMENTS';
+ANNOUNCEMENTS_CUSTOMIZATION = "ANNOUNCEMENTS_CUSTOMIZATION";
+REPORTS = "REPORTS";
+WEEK52HIGHLOW = "52WEEKHIGHLOW";

@@ -1,0 +1,8 @@
+{
+    "selectInputOption":"ALL_ANNOUNCEMENTS",
+    "acceptedInputOptions": ["ALL_ANNOUNCEMENTS", "ANNOUNCEMENTS_CUSTOMIZATION", "REPORTS", "52WEEKHIGHLOW"],
+    "executionProcessOption":["Single"],
+    "executionProcessOptions":["Single", "Multiple"],
+    "executionOrder":["ALL_ANNOUNCEMENTS","REPORTS"],
+    "announcementsFilePath":"H://BSEReports//announcements//"
+}
