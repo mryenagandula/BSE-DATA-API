@@ -3,8 +3,11 @@ import csv
 import logging as log
 from constants import ANNOUNCEMENTS_HEADERS
 from bse_utils import getDictkeyAndValue
+from utils import downloadPdf
+import logging
+from dataScienceFaceBookDataSummary import executePdfSummary
 
-def loadBSEAnnouncements(filePath):
+def loadBSEAnnouncements(attachmentFilePath,pdfFilesListSummary, filePath):
     print("Started Fetching BSE announcements..")
     bse = BSE(download_folder='./')
     bse_announcements = bse.announcements();
@@ -15,13 +18,13 @@ def loadBSEAnnouncements(filePath):
         print('items in table with key and length of value is',key,list_length);
 
         if(list_length > 1) :
-            writeDataToCSV(filePath, value);
+            writeDataToCSV(attachmentFilePath,pdfFilesListSummary, filePath, value);
     print("Completed Fetching BSE announcements..")
     pass
 
 
 
-def writeDataToCSV(fileName: str, result) :
+def writeDataToCSV(attachmentFilePath,pdfFilesListSummary, fileName: str, result) :
     with open(fileName, 'w', encoding='UTF8', newline='') as f:
         writer = csv.writer(f);
         log.info("Started writing data to CSV");
@@ -41,6 +44,7 @@ def writeDataToCSV(fileName: str, result) :
                 getDictkeyAndValue("QUARTER_ID",data),
                 getDictkeyAndValue("FILESTATUS",data),
                 getFullAttachmentUrl(getDictkeyAndValue("ATTACHMENTNAME",data)),
+                getDownloadedFilePath(getDictkeyAndValue("SCRIP_CD",data),getStockSymbol(getDictkeyAndValue("SCRIP_CD",data)),attachmentFilePath,getDictkeyAndValue("ATTACHMENTNAME",data)),
                 getDictkeyAndValue("MORE",data),
                 getDictkeyAndValue("HEADLINE",data),
                 getDictkeyAndValue("CATEGORYNAME",data),
@@ -61,12 +65,23 @@ def writeDataToCSV(fileName: str, result) :
         log.info("Completed writing data to CSV")
         log.info(f"Successfully Saved the file to specified directory {fileName}")
 
+        if pdfFilesListSummary:
+            doDataSummary(attachmentFilePath);
 
 def getFullAttachmentUrl(attachmentName):
     if not attachmentName:
         return "";
     url = 'https://www.bseindia.com/xml-data/corpfiling/AttachLive/'+attachmentName;
     return url;
+
+def getDownloadedFilePath(stockId,stockSymbol, path, attachmentName):
+    if not attachmentName:
+        return "";
+    url = 'https://www.bseindia.com/xml-data/corpfiling/AttachLive/'+attachmentName;
+    fileName = str(stockId)+"_"+stockSymbol + "_"+ attachmentName;
+    downloadPath = path + '//'+ fileName;
+    downloadReport(fileName ,downloadPath , url)
+    return "file:///"+downloadPath;
 
 def getStockSymbol(scriptCode):
     if isinstance(scriptCode, str):
@@ -75,7 +90,6 @@ def getStockSymbol(scriptCode):
 
     if scriptCode is None:
         return '';
-
     scriptName = '';
     try:
         bse = BSE(download_folder='./')
@@ -84,3 +98,14 @@ def getStockSymbol(scriptCode):
         print("type of scriptCode", type(scriptCode))
         print(v)
     return scriptName;
+
+def downloadReport(fileName,downloadPath,attachmentUrl):
+    logging.info(f"downloadPath = {downloadPath}");
+    logging.info(f"fileName= {fileName}");
+    logging.info(f"attachmentUrl= {attachmentUrl}");
+    downloadPdf(attachmentUrl, downloadPath)
+
+def doDataSummary(attachmentFilePath):
+    print("Starting data summary for given pdfs list")
+    executePdfSummary(attachmentFilePath);
+    print("Completing data summary for given pdfs list")
