@@ -4,15 +4,12 @@ import os
 import requests
 
 def getPastWeekDate(noOfDaysFromPresent):
-    today = datetime.datetime.now()
-    n_days_ago = today - datetime.timedelta(days=noOfDaysFromPresent)
-    strDate = n_days_ago.strftime("%d-%m-%Y");
-    return strDate;
+    fromDate = (datetime.datetime.now() - datetime.timedelta(days=noOfDaysFromPresent))
+    return fromDate;
     
 def getTodayDate():
-    today = datetime.datetime.now()
-    strDate = today.strftime("%d-%m-%Y");
-    return strDate;
+    toDate = datetime.datetime.now()
+    return toDate;
 
 def getTimeStamp():
     today = datetime.datetime.now()

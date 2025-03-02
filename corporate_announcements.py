@@ -4,10 +4,10 @@ import logging as log
 from constants import ANNOUNCEMENTS_HEADERS
 from bse_utils import getDictkeyAndValue
 from utils import downloadPdf
-import logging
+import logging as log
 from dataScienceFaceBookDataSummary import executePdfSummary
 
-def loadBSEAnnouncements(attachmentFilePath,pdfFilesListSummary, filePath):
+def loadBSEAnnouncements(pauseDownloadReports,attachmentFilePath,pdfFilesListSummary, filePath):
     print("Started Fetching BSE announcements..")
     bse = BSE(download_folder='./')
     bse_announcements = bse.announcements();
@@ -18,13 +18,13 @@ def loadBSEAnnouncements(attachmentFilePath,pdfFilesListSummary, filePath):
         print('items in table with key and length of value is',key,list_length);
 
         if(list_length > 1) :
-            writeDataToCSV(attachmentFilePath,pdfFilesListSummary, filePath, value);
+            writeDataToCSV(pauseDownloadReports,attachmentFilePath,pdfFilesListSummary, filePath, value);
     print("Completed Fetching BSE announcements..")
     pass
 
 
 
-def writeDataToCSV(attachmentFilePath,pdfFilesListSummary, fileName: str, result) :
+def writeDataToCSV(pauseDownloadReports,attachmentFilePath,pdfFilesListSummary, fileName: str, result) :
     with open(fileName, 'w', encoding='UTF8', newline='') as f:
         writer = csv.writer(f);
         log.info("Started writing data to CSV");
@@ -44,7 +44,7 @@ def writeDataToCSV(attachmentFilePath,pdfFilesListSummary, fileName: str, result
                 getDictkeyAndValue("QUARTER_ID",data),
                 getDictkeyAndValue("FILESTATUS",data),
                 getFullAttachmentUrl(getDictkeyAndValue("ATTACHMENTNAME",data)),
-                getDownloadedFilePath(getDictkeyAndValue("SCRIP_CD",data),getStockSymbol(getDictkeyAndValue("SCRIP_CD",data)),attachmentFilePath,getDictkeyAndValue("ATTACHMENTNAME",data)),
+                getDownloadedFilePath(getDictkeyAndValue("SCRIP_CD",data),getStockSymbol(getDictkeyAndValue("SCRIP_CD",data)),attachmentFilePath,getDictkeyAndValue("ATTACHMENTNAME",data),pauseDownloadReports),
                 getDictkeyAndValue("MORE",data),
                 getDictkeyAndValue("HEADLINE",data),
                 getDictkeyAndValue("CATEGORYNAME",data),
@@ -65,7 +65,7 @@ def writeDataToCSV(attachmentFilePath,pdfFilesListSummary, fileName: str, result
         log.info("Completed writing data to CSV")
         log.info(f"Successfully Saved the file to specified directory {fileName}")
 
-        if pdfFilesListSummary:
+        if pdfFilesListSummary and not pauseDownloadReports:
             doDataSummary(attachmentFilePath);
 
 def getFullAttachmentUrl(attachmentName):
@@ -74,14 +74,16 @@ def getFullAttachmentUrl(attachmentName):
     url = 'https://www.bseindia.com/xml-data/corpfiling/AttachLive/'+attachmentName;
     return url;
 
-def getDownloadedFilePath(stockId,stockSymbol, path, attachmentName):
-    if not attachmentName:
-        return "";
-    url = 'https://www.bseindia.com/xml-data/corpfiling/AttachLive/'+attachmentName;
-    fileName = str(stockId)+"_"+stockSymbol + "_"+ attachmentName;
-    downloadPath = path + '//'+ fileName;
-    downloadReport(fileName ,downloadPath , url)
-    return "file:///"+downloadPath;
+def getDownloadedFilePath(stockId,stockSymbol, path, attachmentName, pauseDownloadReports):
+    if(not pauseDownloadReports):
+        if not attachmentName:
+            return "";
+        url = 'https://www.bseindia.com/xml-data/corpfiling/AttachLive/'+attachmentName;
+        fileName = str(stockId)+"_"+stockSymbol + "_"+ attachmentName;
+        downloadPath = path + '//'+ fileName;
+        downloadReport(fileName ,downloadPath , url)
+        return "file:///"+downloadPath;
+    return "Not Available";
 
 def getStockSymbol(scriptCode):
     if isinstance(scriptCode, str):
@@ -100,9 +102,9 @@ def getStockSymbol(scriptCode):
     return scriptName;
 
 def downloadReport(fileName,downloadPath,attachmentUrl):
-    logging.info(f"downloadPath = {downloadPath}");
-    logging.info(f"fileName= {fileName}");
-    logging.info(f"attachmentUrl= {attachmentUrl}");
+    log.info(f"downloadPath = {downloadPath}");
+    log.info(f"fileName= {fileName}");
+    log.info(f"attachmentUrl= {attachmentUrl}");
     downloadPdf(attachmentUrl, downloadPath)
 
 def doDataSummary(attachmentFilePath):
