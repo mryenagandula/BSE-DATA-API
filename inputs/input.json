@@ -4,7 +4,7 @@
     "executionProcessOption":["Single"],
     "executionProcessOptions":["Single", "Multiple"],
     "executionOrder":["ALL_ANNOUNCEMENTS","REPORTS"],
-    "announcementsFilePath":"H://BSEReports//announcements//",
+    "announcementsFilePath":"F://BSEReports//announcements//",
     "pdfFilesListSummary" : true,
     "pauseDownloadReports" :false,
     "listOfSummaries": ["Facebook","Other"],

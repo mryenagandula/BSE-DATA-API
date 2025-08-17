@@ -31,10 +31,11 @@ def writeDataToCSV(pauseDownloadReports,attachmentFilePath,pdfFilesListSummary, 
         writer.writerow(ANNOUNCEMENTS_HEADERS);
         
         for data in result :
+            scrip_code = getDictkeyAndValue("SCRIP_CD", data)
             writer.writerow([
                 getDictkeyAndValue("NEWSID",data),
                 getDictkeyAndValue("SCRIP_CD",data),
-                getStockSymbol(getDictkeyAndValue("SCRIP_CD",data)),
+                getStockSymbol(scrip_code),
                 getDictkeyAndValue("XML_NAME",data),
                 getDictkeyAndValue("NEWSSUB",data),
                 getDictkeyAndValue("DT_TM",data),
@@ -95,11 +96,26 @@ def getStockSymbol(scriptCode):
     scriptName = '';
     try:
         bse = BSE(download_folder='./')
-        scriptName = bse.getScripName(scriptCode);
-    except ValueError as v:
+        return bse.getScripName(scriptCode);
+    except Exception as v:
         print("type of scriptCode", type(scriptCode))
         print(v)
     return scriptName;
+
+def getStockSymbol(scriptCode):
+    if isinstance(scriptCode, str):
+        if not scriptCode:
+            return "";
+    if scriptCode is None:
+        return '';
+    try:
+        bse = BSE(download_folder='./')
+        return bse.getScripName(scriptCode)
+    except Exception as e:
+        print(f"[SKIPPED] Error while fetching script name for code: {scriptCode}")
+        print("Type of scriptCode:", type(scriptCode))
+        print("Exception:", e)
+        return ''
 
 def downloadReport(fileName,downloadPath,attachmentUrl):
     log.info(f"downloadPath = {downloadPath}");

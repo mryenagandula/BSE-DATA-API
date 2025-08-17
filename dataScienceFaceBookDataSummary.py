@@ -1,4 +1,6 @@
+from datetime import datetime
 import os
+from time import time
 import pdfplumber
 from transformers import BartForConditionalGeneration, BartTokenizer
 
@@ -33,12 +35,13 @@ def summarize_pdfs_from_directory(directory_path, max_length=130):
     return summaries
 
 def save_summary(text_summary, html_summary, filename):
-    txt_filename = filename + ".txt"
+    strDate = datetime.now().strftime("%d%m%Y_%H%M%S")
+    txt_filename = filename + '_' + strDate + ".txt"
     with open(txt_filename, "w") as txt_file:
         txt_file.write(text_summary)
     print(f"Summary saved as {txt_filename}")
 
-    html_filename = filename + ".html"
+    html_filename = filename + '_' + strDate + ".html"
     with open(html_filename, "w") as html_file:
         html_file.write(f"<html><body>{html_summary}</body></html>")
     print(f"Summary saved as {html_filename}")
