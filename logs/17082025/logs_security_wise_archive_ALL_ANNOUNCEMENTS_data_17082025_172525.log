@@ -1,0 +1,8 @@
+2025-08-17 17:25:25,173 - INFO - [exection.py:57] - Started process time start_time = 1755431725.1720412
+2025-08-17 17:25:25,173 - INFO - [exection.py:58] - Log file has created and file name is logs_security_wise_archive_ALL_ANNOUNCEMENTS_data_17082025_172525.log
+2025-08-17 17:25:25,173 - INFO - [exection.py:59] - Selected Input Option :: ALL_ANNOUNCEMENTS
+2025-08-17 17:25:25,467 - INFO - [corporate_announcements.py:30] - Started writing data to CSV
+2025-08-17 17:25:25,467 - INFO - [corporate_announcements.py:67] - Completed writing data to CSV
+2025-08-17 17:25:25,468 - INFO - [corporate_announcements.py:68] - Successfully Saved the file to specified directory F://BSEReports//announcements//17082025//bse_ALL_ANNOUNCEMENTS_data_17082025_172525.csv
+2025-08-17 17:25:25,569 - INFO - [exection.py:64] - Ended process time end_time = 1755431725.5689273
+2025-08-17 17:25:25,569 - INFO - [exection.py:67] - Elapsed time: 0.01 minutes

@@ -1,6 +1,6 @@
 {
     "selectInputOption":"ALL_ANNOUNCEMENTS",
-    "acceptedInputOptions": ["ALL_ANNOUNCEMENTS", "ANNOUNCEMENTS_CUSTOMIZATION", "REPORTS", "52WEEKHIGHLOW"],
+    "acceptedInputOptions": ["ALL_ANNOUNCEMENTS", "SUMMARY_LATER","ANNOUNCEMENTS_CUSTOMIZATION", "REPORTS", "52WEEKHIGHLOW"],
     "executionProcessOption":["Single"],
     "executionProcessOptions":["Single", "Multiple"],
     "executionOrder":["ALL_ANNOUNCEMENTS","REPORTS"],
@@ -8,5 +8,8 @@
     "pdfFilesListSummary" : true,
     "pauseDownloadReports" :false,
     "listOfSummaries": ["Facebook","Other"],
-    "noOfDaysFromPresent":1
+    "noOfDaysFromPresent":1,
+    "recipients": ["srisad95@gmail.com", "kumarbharath64@gmail.com"],
+    "from_address": "srikanthy4820@gmail.com",
+    "app_password": "wjmg eugt xljg lwxv"
 }

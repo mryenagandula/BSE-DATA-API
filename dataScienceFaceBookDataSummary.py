@@ -3,6 +3,7 @@ import os
 from time import time
 import pdfplumber
 from transformers import BartForConditionalGeneration, BartTokenizer
+from sending_gmail import send_email_with_attachment
 
 
 directory_path = "H://BSEReports//announcements//02032025//122117"
@@ -12,10 +13,14 @@ tokenizer = BartTokenizer.from_pretrained(model_name)
 
 def extract_text_from_pdf(pdf_path):
     text = ""
-    with pdfplumber.open(pdf_path) as pdf:
-        for page in pdf.pages:
-            text += page.extract_text()
-    return text
+    try:
+        with pdfplumber.open(pdf_path) as pdf:
+            for page in pdf.pages:
+                text += page.extract_text()
+        return text
+    except Exception as e:
+        print(f"Error extracting text from {pdf_path}: {e}")
+        return None
 
 def summarize_text(text, max_length=130):
     inputs = tokenizer.encode("summarize: " + text, return_tensors="pt", max_length=1024, truncation=True)
@@ -29,23 +34,30 @@ def summarize_pdfs_from_directory(directory_path, max_length=130):
         if filename.endswith(".pdf"):
             pdf_path = os.path.join(directory_path, filename)
             text = extract_text_from_pdf(pdf_path)
+            if not text:
+                continue 
             summary = summarize_text(text, max_length=max_length)
+            print(f"Summary for {filename}:\n{summary}\n");
             fullFileName = directory_path+ "//" + filename; 
             summaries[fullFileName] = summary
     return summaries
 
 def save_summary(text_summary, html_summary, filename):
-    strDate = datetime.now().strftime("%d%m%Y_%H%M%S")
-    txt_filename = filename + '_' + strDate + ".txt"
-    with open(txt_filename, "w") as txt_file:
-        txt_file.write(text_summary)
-    print(f"Summary saved as {txt_filename}")
+    try:
+        strDate = datetime.now().strftime("%d%m%Y_%H%M%S")
+        txt_filename = filename + '_' + strDate + ".txt"
+        with open(txt_filename, "w", encoding="utf-8", errors="replace") as txt_file:
+            txt_file.write(text_summary)
+        print(f"Summary saved as {txt_filename}")
 
-    html_filename = filename + '_' + strDate + ".html"
-    with open(html_filename, "w") as html_file:
-        html_file.write(f"<html><body>{html_summary}</body></html>")
-    print(f"Summary saved as {html_filename}")
-
+        html_filename = filename + '_' + strDate + ".html"
+        with open(html_filename, "w", encoding="utf-8", errors="replace") as html_file:
+            html_file.write(f"<html><body>{html_summary}</body></html>")
+        print(f"Summary saved as {html_filename}")
+        send_email_with_attachment([html_filename, txt_filename])
+    except Exception as e:
+        print(f"Error extracting while saving {filename}: {e}")
+    
 def execute_pdf_summaries(directory_path):
     pdf_summaries = summarize_pdfs_from_directory(directory_path)
     text_summaries = '';
